@@ -1,0 +1,4 @@
+# Exclude report and figures for book publication
+# These are reserved for the book "Exploring Animal Navigation and Bio-Robotic Systems" - Chapter 3
+bio_robotics_results/report.html
+bio_robotics_results/figures/
