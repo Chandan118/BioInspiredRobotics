@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Flow Animations - Bio-Inspired Robotics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #00d4ff, #9c40ff, #ff006e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 60px;
+            font-size: 1.2rem;
+        }
+
+        /* Section Styles */
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #00d4ff;
+        }
+
+        /* 1. Typing Effect */
+        .typing-container {
+            font-size: 2rem;
+            font-family: 'Courier New', monospace;
+            min-height: 60px;
+        }
+
+        .typing-text {
+            border-right: 3px solid #00d4ff;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { border-color: #00d4ff; }
+            51%, 100% { border-color: transparent; }
+        }
+
+        /* 2. Word Carousel */
+        .carousel-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 120px;
+            overflow: hidden;
+        }
+
+        .carousel-word {
+            font-size: 3rem;
+            font-weight: bold;
+            position: absolute;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+        }
+
+        .carousel-word.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #333;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .carousel-dot.active {
+            background: #00d4ff;
+            transform: scale(1.3);
+        }
+
+        /* 3. Floating Words */
+        .floating-container {
+            height: 300px;
+            position: relative;
+            background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 100%);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .floating-word {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: float 8s ease-in-out infinite;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(20px) rotate(-5deg); }
+        }
+
+        /* 4. Rainbow Wave */
+        .wave-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .wave-word {
+            font-size: 2rem;
+            font-weight: bold;
+            animation: wave 2s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* 5. Spotlight Reveal */
+        .spotlight-container {
+            text-align: center;
+            padding: 60px;
+            position: relative;
+        }
+
+        .spotlight-word {
+            font-size: 3rem;
+            font-weight: bold;
+            opacity: 0;
+            filter: blur(20px);
+            transition: all 0.8s ease;
+            display: inline-block;
+        }
+
+        .spotlight-word.revealed {
+            opacity: 1;
+            filter: blur(0);
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.8);
+        }
+
+        /* 6. Particle Words */
+        .particle-container {
+            height: 300px;
+            position: relative;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a15 100%);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            font-size: 1.2rem;
+            color: #fff;
+            pointer-events: none;
+            transition: all 2s ease-out;
+        }
+
+        /* 7. Slide In */
+        .slide-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .slide-word {
+            font-size: 1.8rem;
+            transform: translateX(-100%);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .slide-word.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        /* 8. Pulse Glow */
+        .pulse-container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .pulse-word {
+            font-size: 3rem;
+            font-weight: bold;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+                transform: scale(1);
+            }
+            50% { 
+                text-shadow: 0 0 40px rgba(0, 212, 255, 1), 0 0 80px rgba(156, 64, 255, 0.5);
+                transform: scale(1.1);
+            }
+        }
+
+        /* 9. Typewriter Multiple Lines */
+        .typewriter-lines {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            line-height: 2;
+            white-space: pre-line;
+        }
+
+        .typewriter-lines span {
+            border-right: 2px solid #00d4ff;
+            animation: blink 0.7s infinite;
+        }
+
+        /* 10. Marquee */
+        .marquee-container {
+            overflow: hidden;
+            background: rgba(0, 212, 255, 0.1);
+            padding: 20px 0;
+            border-radius: 10px;
+        }
+
+        .marquee-content {
+            display: flex;
+            animation: marquee 15s linear infinite;
+        }
+
+        .marquee-word {
+            font-size: 2rem;
+            padding: 0 30px;
+            white-space: nowrap;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* 11. 3D Card Flip Words */
+        .flip-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .flip-card {
+            width: 200px;
+            height: 150px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .flip-card-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .flip-card-back {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            transform: rotateY(180deg);
+        }
+
+        /* 12. Bounce Words */
+        .bounce-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .bounce-word {
+            font-size: 2rem;
+            font-weight: bold;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        /* 13. Glow Text */
+        .glow-container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .glow-text {
+            font-size: 4rem;
+            font-weight: bold;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { 
+                color: #fff;
+                text-shadow: 
+                    0 0 10px #fff,
+                    0 0 20px #fff,
+                    0 0 30px #00d4ff,
+                    0 0 40px #00d4ff;
+            }
+            50% { 
+                color: #00d4ff;
+                text-shadow: 
+                    0 0 10px #00d4ff,
+                    0 0 20px #00d4ff,
+                    0 0 30px #9c40ff,
+                    0 0 40px #9c40ff;
+            }
+        }
+
+        /* 14. Confetti Words */
+        .confetti-container {
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .confetti-word {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: confettiFall 4s linear infinite;
+        }
+
+        @keyframes confettiFall {
+            0% { 
+                transform: translateY(-100%) rotate(0deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(300px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* 15. Matrix Rain */
+        .matrix-container {
+            height: 250px;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: 0;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            animation: matrixFall 3s linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes matrixFall {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(250px); }
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .section { padding: 20px; }
+            .typing-container { font-size: 1.5rem; }
+            .carousel-word { font-size: 2rem; }
+            .glow-text { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Word Flow Animations</h1>
+        <p class="subtitle">Interactive Word Animations for Bio-Inspired Robotics</p>
+
+        <!-- 1. Typing Effect -->
+        <div class="section">
+            <h2>1. Typing Effect</h2>
+            <div class="typing-container">
+                <span class="typing-text" id="typingText"></span>
+            </div>
+            <div class="controls">
+                <button class="btn" onclick="startTyping()">Replay</button>
+            </div>
+        </div>
+
+        <!-- 2. Word Carousel -->
+        <div class="section">
+            <h2>2. Word Carousel</h2>
+            <div class="carousel-container" id="carouselContainer">
+                <div class="carousel-word active" id="carouselWord"></div>
+            </div>
+            <div class="carousel-dots" id="carouselDots"></div>
+            <div class="controls">
+                <button class="btn" onclick="startCarousel()">Start Auto</button>
+                <button class="btn" onclick="stopCarousel()">Stop</button>
+            </div>
+        </div>
+
+        <!-- 3. Floating Words -->
+        <div class="section">
+            <h2>3. Floating Words</h2>
+            <div class="floating-container" id="floatingContainer"></div>
+            <div class="controls">
+                <button class="btn" onclick="addFloatingWord()">Add Word</button>
+                <button class="btn" onclick="clearFloatingWords()">Clear</button>
+            </div>
+        </div>
+
+        <!-- 4. Rainbow Wave -->
+        <div class="section">
+            <h2>4. Rainbow Wave</h2>
+            <div class="wave-container" id="waveContainer"></div>
+        </div>
+
+        <!-- 5. Spotlight Reveal -->
+        <div class="section">
+            <h2>5. Spotlight Reveal</h2>
+            <div class="spotlight-container">
+                <span class="spotlight-word" id="spotlightWord">NAVIGATION</span>
+            </div>
+            <div class="controls">
+                <button class="btn" onclick="revealSpotlight()">Reveal</button>
+            </div>
+        </div>
+
+        <!-- 6. Particle Words -->
+        <div class="section">
+            <h2>6. Particle Explosion</h2>
+            <div class="particle-container" id="particleContainer"></div>
+            <div class="controls">
+                <button class="btn" onclick="explodeParticles()">Explode!</button>
+            </div>
+        </div>
+
+        <!-- 7. Slide In -->
+        <div class="section">
+            <h2>7. Slide In Animation</h2>
+            <div class="slide-container" id="slideContainer"></div>
+            <div class="controls">
+                <button class="btn" onclick="animateSlides()">Animate</button>
+            </div>
+        </div>
+
+        <!-- 8. Pulse Glow -->
+        <div class="section">
+            <h2>8. Pulse Glow</h2>
+            <div class="pulse-container">
+                <span class="pulse-word">ALGORITHMS</span>
+            </div>
+        </div>
+
+        <!-- 9. Typewriter Poem -->
+        <div class="section">
+            <h2>9. Typewriter Poem</h2>
+            <div class="typewriter-lines" id="typewriterLines"></div>
+            <div class="controls">
+                <button class="btn" onclick="typePoem()">Play Poem</button>
+            </div>
+        </div>
+
+        <!-- 10. Marquee -->
+        <div class="section">
+            <h2>10. Infinite Marquee</h2>
+            <div class="marquee-container">
+                <div class="marquee-content" id="marqueeContent"></div>
+            </div>
+        </div>
+
+        <!-- 11. Flip Cards -->
+        <div class="section">
+            <h2>11. Flip Card Words</h2>
+            <div class="flip-container">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">BUG</div>
+                        <div class="flip-card-back">Algorithm</div>
+                    </div>
+                </div>
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">FUZZY</div>
+                        <div class="flip-card-back">Logic</div>
+                    </div>
+                </div>
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">SWARM</div>
+                        <div class="flip-card-back">Intelligence</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 12. Bounce Words -->
+        <div class="section">
+            <h2>12. Bouncing Words</h2>
+            <div class="bounce-container">
+                <span class="bounce-word" style="animation-delay: 0s">ROBOT</span>
+                <span class="bounce-word" style="animation-delay: 0.2s">NAVIGATE</span>
+                <span class="bounce-word" style="animation-delay: 0.4s">LEARN</span>
+                <span class="bounce-word" style="animation-delay: 0.6s">ADAPT</span>
+            </div>
+        </div>
+
+        <!-- 13. Glow Text -->
+        <div class="section">
+            <h2>13. Neon Glow Text</h2>
+            <div class="glow-container">
+                <span class="glow-text">BIO-ROBOTICS</span>
+            </div>
+        </div>
+
+        <!-- 14. Confetti Words -->
+        <div class="section">
+            <h2>14. Confetti Words</h2>
+            <div class="confetti-container" id="confettiContainer"></div>
+            <div class="controls">
+                <button class="btn" onclick="startConfetti()">Celebrate!</button>
+            </div>
+        </div>
+
+        <!-- 15. Matrix Rain -->
+        <div class="section">
+            <h2>15. Matrix Rain Effect</h2>
+            <div class="matrix-container" id="matrixContainer"></div>
+            <div class="controls">
+                <button class="btn" onclick="startMatrix()">Start Matrix</button>
+                <button class="btn" onclick="stopMatrix()">Stop</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const words = [
+            'Navigation', 'Algorithm', 'Robotics', 'Bio-Inspired',
+            'Fuzzy Logic', 'Neural', 'Swarm', 'Ant Colony',
+            'Q-Learning', 'Evolution', 'Path Planning', 'Optimization'
+        ];
+
+        const colors = [
+            '#00d4ff', '#9c40ff', '#ff006e', '#00ff88',
+            '#ffaa00', '#ff4444', '#44ff44', '#4444ff'
+        ];
+
+        const poem = [
+            "In circuits deep, algorithms dream,",
+            "Of paths through mazes, navigation stream.",
+            "Bio-inspired wisdom guides the way,",
+            "Through obstacles and challenges, day by day."
+        ];
+
+        // 1. Typing Effect
+        let typingTimeout;
+        function startTyping() {
+            const element = document.getElementById('typingText');
+            const text = "Bio-Inspired Robotics Navigation Simulation";
+            let i = 0;
+            clearInterval(typingTimeout);
+            element.textContent = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    typingTimeout = setTimeout(type, 80);
+                }
+            }
+            type();
+        }
+
+        // 2. Word Carousel
+        let carouselInterval;
+        let currentCarouselIndex = 0;
+
+        function initCarousel() {
+            const container = document.getElementById('carouselContainer');
+            const dotsContainer = document.getElementById('carouselDots');
+            
+            // Create words
+            container.innerHTML = words.map((word, i) => 
+                `<span class="carousel-word ${i === 0 ? 'active' : ''}" style="color: ${colors[i % colors.length]}">${word}</span>`
+            ).join('');
+            
+            // Create dots
+            dotsContainer.innerHTML = words.map((_, i) => 
+                `<span class="carousel-dot ${i === 0 ? 'active' : ''}" onclick="goToCarousel(${i})"></span>`
+            ).join('');
+        }
+
+        function updateCarousel() {
+            const carouselWords = document.querySelectorAll('.carousel-word');
+            const dots = document.querySelectorAll('.carousel-dot');
+            
+            carouselWords.forEach((word, i) => {
+                word.classList.toggle('active', i === currentCarouselIndex);
+            });
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentCarouselIndex);
+            });
+        }
+
+        function startCarousel() {
+            stopCarousel();
+            carouselInterval = setInterval(() => {
+                currentCarouselIndex = (currentCarouselIndex + 1) % words.length;
+                updateCarousel();
+            }, 1000);
+        }
+
+        function stopCarousel() {
+            clearInterval(carouselInterval);
+        }
+
+        function goToCarousel(index) {
+            currentCarouselIndex = index;
+            updateCarousel();
+            startCarousel();
+        }
+
+        // 3. Floating Words
+        function createFloatingWord(word, color) {
+            const container = document.getElementById('floatingContainer');
+            const element = document.createElement('span');
+            element.className = 'floating-word';
+            element.textContent = word;
+            element.style.color = color;
+            element.style.left = Math.random() * 80 + '%';
+            element.style.top = Math.random() * 80 + '%';
+            element.style.animationDelay = Math.random() * 3 + 's';
+            element.style.animationDuration = (5 + Math.random() * 5) + 's';
+            container.appendChild(element);
+        }
+
+        function addFloatingWord() {
+            const randomWord = words[Math.floor(Math.random() * words.length)];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            createFloatingWord(randomWord, randomColor);
+        }
+
+        function clearFloatingWords() {
+            document.getElementById('floatingContainer').innerHTML = '';
+        }
+
+        // 4. Rainbow Wave
+        function initWave() {
+            const container = document.getElementById('waveContainer');
+            container.innerHTML = words.slice(0, 8).map((word, i) => 
+                `<span class="wave-word" style="color: ${colors[i % colors.length]}; animation-delay: ${i * 0.15}s">${word}</span>`
+            ).join('');
+        }
+
+        // 5. Spotlight Reveal
+        function revealSpotlight() {
+            const element = document.getElementById('spotlightWord');
+            element.classList.remove('revealed');
+            setTimeout(() => element.classList.add('revealed'), 100);
+        }
+
+        // 6. Particle Explosion
+        function explodeParticles() {
+            const container = document.getElementById('particleContainer');
+            container.innerHTML = '';
+            const centerX = container.offsetWidth / 2;
+            const centerY = container.offsetHeight / 2;
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('span');
+                particle.className = 'particle';
+                particle.textContent = words[i % words.length];
+                particle.style.color = colors[i % colors.length];
+                particle.style.left = centerX + 'px';
+                particle.style.top = centerY + 'px';
+                
+                const angle = (i / 20) * Math.PI * 2;
+                const distance = 100 + Math.random() * 100;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                
+                particle.style.transform = `translate(${x}px, ${y}px)`;
+                particle.style.opacity = '0';
+                
+                container.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.style.opacity = '1';
+                }, 50);
+            }
+        }
+
+        // 7. Slide In
+        function initSlides() {
+            const container = document.getElementById('slideContainer');
+            container.innerHTML = words.slice(0, 6).map((word, i) => 
+                `<span class="slide-word" style="transition-delay: ${i * 0.1}s; color: ${colors[i % colors.length]}">▸ ${word}</span>`
+            ).join('');
+        }
+
+        function animateSlides() {
+            const slides = document.querySelectorAll('.slide-word');
+            slides.forEach(slide => slide.classList.remove('visible'));
+            slides.forEach(slide => setTimeout(() => slide.classList.add('visible'), 100));
+        }
+
+        // 9. Typewriter Poem
+        let poemLineIndex = 0;
+        let poemCharIndex = 0;
+
+        function typePoem() {
+            const container = document.getElementById('typewriterLines');
+            container.innerHTML = '';
+            poemLineIndex = 0;
+            poemCharIndex = 0;
+            typePoemLine();
+        }
+
+        function typePoemLine() {
+            if (poemLineIndex >= poem.length) return;
+            
+            const container = document.getElementById('typewriterLines');
+            
+            if (!container.dataset.lines) {
+                container.dataset.lines = '';
+            }
+            
+            const currentLine = poem[poemLineIndex];
+            
+            if (poemCharIndex < currentLine.length) {
+                container.dataset.lines += currentLine[poemCharIndex];
+                container.innerHTML = container.dataset.lines + '<span></span>';
+                poemCharIndex++;
+                setTimeout(typePoemLine, 50);
+            } else {
+                container.dataset.lines += '\n';
+                poemLineIndex++;
+                poemCharIndex = 0;
+                container.innerHTML = container.dataset.lines;
+                setTimeout(typePoemLine, 500);
+            }
+        }
+
+        // 10. Marquee
+        function initMarquee() {
+            const container = document.getElementById('marqueeContent');
+            const marqueeWords = words.concat(words); // Double for seamless loop
+            container.innerHTML = marqueeWords.map((word, i) => 
+                `<span class="marquee-word" style="color: ${colors[i % colors.length]}">${word}</span>`
+            ).join('');
+        }
+
+        // 14. Confetti
+        let confettiInterval;
+
+        function startConfetti() {
+            clearInterval(confettiInterval);
+            const container = document.getElementById('confettiContainer');
+            
+            confettiInterval = setInterval(() => {
+                const word = words[Math.floor(Math.random() * words.length)];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                const confetti = document.createElement('span');
+                confetti.className = 'confetti-word';
+                confetti.textContent = word;
+                confetti.style.color = color;
+                confetti.style.left = Math.random() * 90 + '%';
+                confetti.style.animationDuration = (2 + Math.random() * 3) + 's';
+                
+                container.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 5000);
+            }, 200);
+        }
+
+        // 15. Matrix Rain
+        let matrixInterval;
+        const matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+
+        function startMatrix() {
+            stopMatrix();
+            const container = document.getElementById('matrixContainer');
+            
+            matrixInterval = setInterval(() => {
+                const column = document.createElement('span');
+                column.className = 'matrix-column';
+                column.style.left = Math.random() * 90 + '%';
+                column.style.animationDuration = (2 + Math.random() * 2) + 's';
+                
+                let text = '';
+                for (let i = 0; i < 10; i++) {
+                    text += matrixChars[Math.floor(Math.random() * matrixChars.length)] + ' ';
+                }
+                column.textContent = text;
+                
+                container.appendChild(column);
+                
+                setTimeout(() => column.remove(), 4000);
+            }, 300);
+        }
+
+        function stopMatrix() {
+            clearInterval(matrixInterval);
+        }
+
+        // Initialize all animations on load
+        document.addEventListener('DOMContentLoaded', () => {
+            startTyping();
+            initCarousel();
+            startCarousel();
+            initWave();
+            initSlides();
+            initMarquee();
+            createFloatingWord('SWARM', colors[0]);
+            createFloatingWord('INTELLIGENCE', colors[1]);
+            createFloatingWord('ROBOTICS', colors[2]);
+            
+            // Auto-animate slides after 1 second
+            setTimeout(animateSlides, 1000);
+        });
+    </script>
+</body>
+</html>
