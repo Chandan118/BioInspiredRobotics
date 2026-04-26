@@ -164,3 +164,5 @@ MIT License
 
 Beijing Institute of Technology (BIT)  
 Navigation and Robotics Laboratory
+
+<!-- MIT License -->
